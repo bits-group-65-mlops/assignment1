@@ -11,7 +11,10 @@ mlflow.set_tracking_uri("http://127.0.0.1:5000")
 mlflow.set_experiment("Iris Classification")
 
 # Load data
-df = pd.read_csv('../data/iris.csv')
+import os
+# Get the absolute path to the data directory
+data_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data', 'iris.csv'))
+df = pd.read_csv(data_path)
 X = df.drop('target', axis=1)
 y = df['target']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -46,3 +49,36 @@ with mlflow.start_run(run_name='Random Forest'):
     mlflow.log_param("max_features", "sqrt")
     mlflow.log_metric("accuracy", accuracy)
     mlflow.sklearn.log_model(rf, "model")
+
+# --- Register the best model in Model Registry ---
+# Get the best run by accuracy
+best_run = mlflow.search_runs(
+    experiment_ids=mlflow.get_experiment_by_name("Iris Classification").experiment_id,
+    order_by=["metrics.accuracy DESC"]
+).iloc[0]
+
+# Register the model from the best run
+model_uri = f"runs:/{best_run.run_id}/model"
+try:
+    # Check if model already exists
+    client = mlflow.tracking.MlflowClient()
+    try:
+        existing_model = client.get_registered_model("IrisClassifier")
+        print(f"Model 'IrisClassifier' already exists. Registering new version.")
+    except:
+        print(f"Creating new model 'IrisClassifier'")
+    
+    mv = mlflow.register_model(model_uri, "IrisClassifier")
+    
+    # Transition the model to Production
+    client.transition_model_version_stage(
+        name="IrisClassifier",
+        version=mv.version,
+        stage="Production"
+    )
+    
+    print(f"Model registered as: {mv.name} version {mv.version}")
+    print(f"Model transitioned to Production stage")
+except Exception as e:
+    print(f"Error registering model: {e}")
+    print("You can register the model manually via the MLflow UI at http://127.0.0.1:5000")
