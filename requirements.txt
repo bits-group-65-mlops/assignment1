@@ -1,6 +1,5 @@
 pandas
-scikit-learn
-mlflow
+scikit-learn==1.6.1
 flask
 dvc
 pydantic>=2.0.0
@@ -8,3 +7,10 @@ pytest
 pytest-flask
 python-dotenv
 gunicorn
+mlflow==2.21.0
+cloudpickle==3.1.1
+numpy==2.0.2
+pandas==2.2.3
+psutil==5.8.0
+scipy==1.13.1
+ 
