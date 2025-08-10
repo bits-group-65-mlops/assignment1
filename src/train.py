@@ -64,9 +64,9 @@ try:
     client = mlflow.tracking.MlflowClient()
     try:
         existing_model = client.get_registered_model("IrisClassifier")
-        print(f"Model 'IrisClassifier' already exists. Registering new version.")
-    except:
-        print(f"Creating new model 'IrisClassifier'")
+        print("Model 'IrisClassifier' already exists. Registering new version.")
+    except mlflow.exceptions.RestException:
+        print("Creating new model 'IrisClassifier'")
     
     mv = mlflow.register_model(model_uri, "IrisClassifier")
     
@@ -78,7 +78,6 @@ try:
     )
     
     print(f"Model registered as: {mv.name} version {mv.version}")
-    print(f"Model transitioned to Production stage")
     
     # Save the best model locally for CI/CD environments without MLflow
     import joblib
