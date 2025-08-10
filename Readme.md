@@ -1,6 +1,63 @@
 # MLOps Pipeline: Iris Classifier
 
-This project demonstrates a complete MLOps pipeline for training, tracking, versioning, deploying, and monitoring a machine learning model for Iris flower classification.
+This project demonstrates a complete MLOps pipeline for training, tracking, versioning
+
+## 👥 Collaborative Development
+
+### Setting Up SSH for GitHub
+
+For```bash
+git fetch
+git pull origin main
+```
+
+## 📝 License
+
+MITand convenient access to GitHub, set up SSH keys:
+
+1. **Generate a new SSH key** (if you don't already have one):
+   ```bash
+   ssh-keygen -t ed25519 -C "your-email@example.com" -f ~/.ssh/id_rsa_github_personal
+   ```
+
+2. **Add your SSH key to the SSH agent**:
+   ```bash
+   eval "$(ssh-agent -s)"
+   ssh-add ~/.ssh/id_rsa_github_personal
+   ```
+
+3. **Add your SSH public key to your GitHub account**:
+   - Copy the content of your public key:
+     ```bash
+     cat ~/.ssh/id_rsa_github_personal.pub
+     ```
+   - Go to GitHub > Settings > SSH and GPG keys > New SSH key
+   - Paste your key and save
+
+4. **Create/edit your SSH config** at `~/.ssh/config`:
+   ```
+   Host github-personal
+     HostName github.com
+     User git
+     IdentityFile ~/.ssh/id_rsa_github_personal
+     IdentitiesOnly yes
+   ```
+
+5. **Test your SSH connection**:
+   ```bash
+   ssh -T git@github-personal
+   ```
+
+### Git Workflow
+
+When working collaboratively on this project:ine
+
+The GitHub Actions workflow automatically:
+1. Lints and tests the code
+2. Builds the Docker image
+3. Pushes to Docker Hub
+
+## 👥 Collaborative Development, and monitoring a machine learning model for Iris flower classification.
 
 ## 🏛️ Architecture
 
@@ -35,6 +92,22 @@ git config user.email "your-email@example.com"
 # Optional: Configure Git for this repo only (if you have multiple GitHub accounts)
 git config --local user.name "Your Name"
 git config --local user.email "your-email@example.com"
+
+# SSH Configuration for multiple GitHub accounts (recommended for team collaboration)
+# 1. Add to your ~/.ssh/config file:
+# Host github-personal
+#   HostName github.com
+#   User git
+#   IdentityFile ~/.ssh/id_rsa_github_personal
+#   IdentitiesOnly yes
+
+# 2. Update remote URL to use SSH with your custom host
+git remote set-url origin git@github-personal:bits-group-65-mlops/assignment1.git
+
+# 3. Verify your remote configuration
+git remote -v
+# Should show: origin git@github-personal:bits-group-65-mlops/assignment1.git (fetch)
+#              origin git@github-personal:bits-group-65-mlops/assignment1.git (push)
 
 # Install dependencies
 pip install -r requirements.txt
