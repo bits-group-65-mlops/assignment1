@@ -18,6 +18,9 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy the application code
 COPY src/ /app/
 
+# Copy the trained model directory
+COPY models/ /app/models/
+
 # Expose the port the app runs on
 EXPOSE 5001
 

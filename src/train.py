@@ -79,6 +79,29 @@ try:
     
     print(f"Model registered as: {mv.name} version {mv.version}")
     print(f"Model transitioned to Production stage")
+    
+    # Save the best model locally for CI/CD environments without MLflow
+    import joblib
+    best_model = mlflow.sklearn.load_model(model_uri)
+    models_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models'))
+    os.makedirs(models_dir, exist_ok=True)
+    joblib.dump(best_model, os.path.join(models_dir, 'iris_classifier.pkl'))
+    print(f"Model saved to {os.path.join(models_dir, 'iris_classifier.pkl')}")
+    
 except Exception as e:
     print(f"Error registering model: {e}")
     print("You can register the model manually via the MLflow UI at http://127.0.0.1:5000")
+    
+    # Even if MLflow registration fails, save the best model based on accuracy
+    if 'rf' in locals() and 'lr' in locals():
+        import joblib
+        # Compare accuracies and save the best model
+        rf_accuracy = accuracy_score(y_test, rf.predict(X_test))
+        lr_accuracy = accuracy_score(y_test, lr.predict(X_test))
+        best_model = rf if rf_accuracy >= lr_accuracy else lr
+        
+        models_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models'))
+        os.makedirs(models_dir, exist_ok=True)
+        model_path = os.path.join(models_dir, 'iris_classifier.pkl')
+        joblib.dump(best_model, model_path)
+        print(f"Saved best model to {model_path} for CI/CD environments")

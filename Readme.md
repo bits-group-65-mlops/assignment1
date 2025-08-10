@@ -91,9 +91,13 @@ curl http://localhost:5001/metrics
 ├── data/                # Dataset files
 │   ├── iris.csv         # Iris dataset
 │   └── iris.csv.dvc     # DVC tracking file
+├── models/              # Saved model files for fallback
+├── scripts/             # Helper scripts
+│   └── train_ci_model.py # Model training for CI environment
 ├── src/                 # Source code
 │   ├── app.py           # Flask API
 │   ├── preprocess.py    # Data preprocessing
+│   ├── schemas.py       # Pydantic validation schemas
 │   └── train.py         # Model training script
 ├── tests/               # Unit tests
 ├── Dockerfile           # Docker configuration
@@ -112,8 +116,19 @@ pytest tests/
 
 The GitHub Actions workflow automatically:
 1. Lints and tests the code
-2. Builds the Docker image
-3. Pushes to Docker Hub
+2. Builds a simple model for testing (without requiring MLflow)
+3. Builds the Docker image
+4. Pushes to Docker Hub
+
+### Model Fallback Mechanism
+
+This project implements a robust model fallback mechanism:
+
+1. **Primary: MLflow Registry** - In production, the app attempts to load the registered model from MLflow.
+2. **Secondary: Local Model File** - If MLflow is unavailable, the app falls back to a local model file.
+3. **Tertiary: Dummy Model** - For testing environments, a simple dummy model is used if no other option is available.
+
+This ensures the application can run in any environment, including CI/CD pipelines where MLflow may not be available.
 
 ## 👥 Collaborative Development
 

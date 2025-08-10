@@ -105,6 +105,9 @@ mlartifacts/
 mlflow-*.db
 outputs/
 
+# Do NOT ignore saved model files - needed for CI/CD
+!models/*.pkl
+
 # Application logs
 app.log
 *.sqlite
