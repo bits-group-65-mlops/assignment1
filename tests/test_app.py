@@ -2,6 +2,7 @@ import pytest
 from flask import json
 import sys
 import os
+import numpy as np
 
 # Add the src directory to the path so we can import the app
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
@@ -18,7 +19,7 @@ class MockModel:
         if hasattr(data, 'shape'):  # Check if it's a DataFrame or numpy array
             return np.zeros(len(data), dtype=int)
         # Fallback for other data types
-        return [0] * len(data)
+        return np.zeros(len(data), dtype=int)
 
 # Patch MLflow's load_model to return our mock
 mlflow.pyfunc.load_model = lambda model_uri: MockModel()
@@ -57,3 +58,4 @@ def test_metrics_endpoint(client):
     data = json.loads(response.data)
     assert "total_requests" in data
     assert "predictions_by_class" in data
+ 
