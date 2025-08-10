@@ -28,6 +28,14 @@ This project demonstrates a complete MLOps pipeline for training, tracking, vers
 git clone https://github.com/bits-group-65-mlops/assignment1.git
 cd assignment1
 
+# Configure Git for collaboration (important for team members)
+git config user.name "Your Name"
+git config user.email "your-email@example.com"
+
+# Optional: Configure Git for this repo only (if you have multiple GitHub accounts)
+git config --local user.name "Your Name"
+git config --local user.email "your-email@example.com"
+
 # Install dependencies
 pip install -r requirements.txt
 ```
@@ -107,6 +115,41 @@ The GitHub Actions workflow automatically:
 2. Builds the Docker image
 3. Pushes to Docker Hub
 
-## 📝 License
+## � Collaborative Development
+
+When working collaboratively on this project:
+
+1. **Always pull before starting work**:
+   ```bash
+   git pull origin main
+   ```
+
+2. **Create feature branches for new work**:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Commit changes with descriptive messages**:
+   ```bash
+   git add .
+   git commit -m "Add feature X that does Y"
+   ```
+
+4. **Push changes to the remote repository**:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+5. **Create a Pull Request** through GitHub to merge your changes
+
+6. **Review and discuss code** before merging
+
+Remember to keep your local repository up to date with:
+```bash
+git fetch
+git pull origin main
+```
+
+## �📝 License
 
 MIT
