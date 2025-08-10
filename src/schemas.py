@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import List, Dict, Any
 import numpy as np
 
@@ -8,18 +8,18 @@ class PredictionFeatures(BaseModel):
     petal_length: float = Field(..., gt=0, description="Petal length in cm")
     petal_width: float = Field(..., gt=0, description="Petal width in cm")
     
-    @validator('*')
-    def check_positive(cls, v, values, **kwargs):
+    @field_validator('*')
+    def check_positive(cls, v, info):
         if v <= 0:
-            field_name = kwargs['field'].name
+            field_name = info.field_name
             raise ValueError(f"{field_name} must be positive")
         return v
 
 class PredictionRequest(BaseModel):
     data: List[PredictionFeatures]
     
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "data": [
                     {
@@ -31,3 +31,4 @@ class PredictionRequest(BaseModel):
                 ]
             }
         }
+    }

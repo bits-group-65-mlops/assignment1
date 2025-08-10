@@ -54,7 +54,7 @@ def predict():
         try:
             prediction_request = PredictionRequest(**json_data)
             # Convert validated data to dict for DataFrame
-            json_data = prediction_request.dict()
+            json_data = prediction_request.model_dump()
         except Exception as ve:
             metrics["validation_errors"] += 1
             error_message = f"Validation error: {str(ve)}"
