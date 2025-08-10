@@ -13,7 +13,11 @@ import mlflow.pyfunc
 # Mock the MLflow model
 class MockModel:
     def predict(self, data):
-        # Just return class 0 for all predictions in tests
+        # More robust mock that works with any dataframe
+        import numpy as np
+        if hasattr(data, 'shape'):  # Check if it's a DataFrame or numpy array
+            return np.zeros(len(data), dtype=int)
+        # Fallback for other data types
         return [0] * len(data)
 
 # Patch MLflow's load_model to return our mock
@@ -34,12 +38,12 @@ def test_predict_endpoint(client):
     """Test the predict endpoint with valid data."""
     response = client.post(
         '/predict',
-        data=json.dumps({
+        json={
             'data': [
                 {'sepal_length': 5.1, 'sepal_width': 3.5, 'petal_length': 1.4, 'petal_width': 0.2}
             ]
-        }),
-        content_type='application/json'
+        },
+        headers={'Content-Type': 'application/json'}
     )
     assert response.status_code == 200
     data = json.loads(response.data)

@@ -11,7 +11,9 @@ import os
 
 print('Training model for CI/CD...')
 iris = load_iris()
-X = pd.DataFrame(iris.data, columns=iris.feature_names)
+# Using underscore feature names to match the API input
+feature_names = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+X = pd.DataFrame(iris.data, columns=feature_names)
 y = iris.target
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 model.fit(X, y)

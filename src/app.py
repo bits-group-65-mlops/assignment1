@@ -50,11 +50,17 @@ def predict():
         json_data = request.get_json()
         logging.info(f"Received request: {json_data}")
         
+        if json_data is None:
+            # Handle case where the request doesn't have valid JSON
+            logging.error("No JSON data received or Content-Type not set to application/json")
+            return jsonify({'error': 'No JSON data received or Content-Type not set to application/json'}), 400
+        
         # Validate with Pydantic schema
         try:
             prediction_request = PredictionRequest(**json_data)
             # Convert validated data to dict for DataFrame
             json_data = prediction_request.model_dump()
+            logging.info(f"Validated data: {json_data}")
         except Exception as ve:
             metrics["validation_errors"] += 1
             error_message = f"Validation error: {str(ve)}"
@@ -63,16 +69,22 @@ def predict():
 
         # Convert to DataFrame
         df = pd.DataFrame(json_data['data'])
+        logging.info(f"DataFrame for prediction: {df.columns.tolist()}")
 
         # Get prediction
-        prediction = model.predict(df)
-        metrics["total_requests"] += 1
-        for p in prediction:
-            metrics["predictions_by_class"][p] += 1
-
-        # Log the prediction and return it
-        logging.info(f"Prediction: {prediction.tolist()}")
-        return jsonify({'prediction': prediction.tolist()})
+        try:
+            prediction = model.predict(df)
+            metrics["total_requests"] += 1
+            for p in prediction:
+                metrics["predictions_by_class"][p] += 1
+                
+            # Log the prediction and return it
+            logging.info(f"Prediction: {prediction.tolist()}")
+            return jsonify({'prediction': prediction.tolist()})
+        except Exception as e:
+            error_message = f"Error processing request: {str(e)}"
+            logging.error(error_message)
+            return jsonify({'error': error_message}), 400
 
     except Exception as e:
         error_message = f"Error processing request: {str(e)}"
